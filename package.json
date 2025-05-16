@@ -1,6 +1,6 @@
 {
   "name": "SUBZERO-MD",
-  "version": "****",
+  "version": "3.6.0",
   "description": "THE BEST BOT IN THE UNIVERSE",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "adm-zip": "^0.5.16",
     "api-dylux": "1.8.5",
     "axios": "^1.2.5",
-    "better-sqlite3" "^9.0.0",
+    "better-sqlite3": "^9.0.0",
     "btch-downloader": "^2.2.9",
     "buffer": "^6.0.3",
     "cheerio": "^1.0.0-rc.12",
@@ -41,7 +41,7 @@
     "gifted-dls": "1.3.5",
     "google-tts-api": "^2.0.2",
     "javascript-obfuscator": "^4.0.0",
-    "jimp": "^1.6.0",
+    "jimp": "^0.16.1",
     "megajs": "^1.1.0",
     "mongoose": "^8.0.0",
     "mrnima-moviedl": "1.0.0",
