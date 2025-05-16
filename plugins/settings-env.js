@@ -17,60 +17,6 @@ const { exec } = require('child_process');
 const axios = require('axios');
 const FormData = require('form-data');
 const { setConfig, getConfig } = require("../lib/configdb");
-///tesbbbbb
-
-
-cmd({
-  pattern: "setprefix1",
-  desc: "Set the bot's command prefix",
-  category: "owner",
-  react: "✅",
-  filename: __filename
-}, async (conn, mek, m, { args, isCreator, reply }) => {
-  if (!isCreator) return reply("❗ Only the bot owner can use this command.");
-
-  const newPrefix = args[0]?.trim();
-  if (!newPrefix || newPrefix.length > 2) return reply("❌ Provide a valid prefix (1–2 characters).");
-
-  await setConfig("PREFIX", newPrefix);
-  await reply(`✅ Prefix updated to: *${newPrefix}*\n\n♻️ Restarting...`);
-  setTimeout(() => exec("pm2 restart all"), 2000);
-});
-
-cmd({
-  pattern: "setbotname1",
-  desc: "Set the bot's name",
-  category: "owner",
-  react: "✅",
-  filename: __filename
-}, async (conn, mek, m, { args, isCreator, reply }) => {
-  if (!isCreator) return reply("❗ Only the bot owner can use this command.");
-
-  const newName = args.join(" ").trim();
-  if (!newName) return reply("❌ Provide a bot name.");
-
-  await setConfig("BOT_NAME", newName);
-  await reply(`✅ Bot name updated to: *${newName}*\n\n♻️ Restarting...`);
-  setTimeout(() => exec("pm2 restart all"), 2000);
-});
-
-cmd({
-  pattern: "setownername1",
-  desc: "Set the owner's name",
-  category: "owner",
-  react: "✅",
-  filename: __filename
-}, async (conn, mek, m, { args, isCreator, reply }) => {
-  if (!isCreator) return reply("❗ Only the bot owner can use this command.");
-
-  const newOwner = args.join(" ").trim();
-  if (!newOwner) return reply("❌ Provide an owner name.");
-
-  await setConfig("OWNER_NAME", newOwner);
-  await reply(`✅ Owner name updated to: *${newOwner}*\n\n♻️ Restarting...`);
-  setTimeout(() => exec("pm2 restart all"), 2000);
-});
-//-£-*;*-+
 
 // SET BOT IMAGE
 cmd({
