@@ -383,11 +383,11 @@ async (conn, mek, m, { from, args, isCreator, reply }) => {
 
 
 // ===========
-/*
+
 cmd({
     pattern: "mode",
     alias: ["setmode"],
-    react: "🫟",
+    react: "🔐",
     desc: "Set bot mode to private or public.",
     category: "settings",
     filename: __filename,
@@ -412,8 +412,8 @@ cmd({
     }
 });
 
-*/
 
+/*
 cmd({
     pattern: "mode",
     alias: ["setmode"],
@@ -439,7 +439,7 @@ cmd({
         return reply("❌ Invalid mode. Please use `.mode private` or `.mode public`.");
     }
 });
-
+*/
 
 cmd({
     pattern: "autotyping",
