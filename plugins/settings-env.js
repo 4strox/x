@@ -383,7 +383,7 @@ async (conn, mek, m, { from, args, isCreator, reply }) => {
 
 
 // ===========
-
+/*
 cmd({
     pattern: "mode",
     alias: ["setmode"],
@@ -411,13 +411,13 @@ cmd({
         return reply("❌ Invalid mode. Please use `.mode private` or `.mode public`.");
     }
 });
+*/
 
 
-/*
 cmd({
     pattern: "mode",
     alias: ["setmode"],
-    react: "🫟",
+    react: "🔐",
     desc: "Set bot mode to private or public.",
     category: "settings",
     filename: __filename,
@@ -434,12 +434,20 @@ cmd({
 
     if (["private", "public"].includes(modeArg)) {
         setConfig("MODE", modeArg);
-        return reply(`✅ Bot mode is now set to *${modeArg.toUpperCase()}*.`);
+        await reply(`✅ Bot mode is now set to *${modeArg.toUpperCase()}*.\n\n♻ Restarting bot to apply changes...`);
+
+        exec("pm2 restart all", (error, stdout, stderr) => {
+            if (error) {
+                console.error("Restart error:", error);
+                return;
+            }
+            console.log("PM2 Restart:", stdout || stderr);
+        });
     } else {
         return reply("❌ Invalid mode. Please use `.mode private` or `.mode public`.");
     }
 });
-*/
+
 
 cmd({
     pattern: "autotyping",
