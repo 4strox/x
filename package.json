@@ -9,6 +9,7 @@
     "restart": "pm2 restart SUBZERO-MD"
   },
   "dependencies": {
+    "better-sqlite3": "^9.0.0",
     "@adiwajshing/keyed-db": "latest",
     "@dark-yasiya/scrap": "1.0.1",
     "@dark-yasiya/yt-dl.js": "latest",
@@ -22,7 +23,6 @@
     "adm-zip": "^0.5.16",
     "api-dylux": "1.8.5",
     "axios": "^1.2.5",
-    "better-sqlite3": "^9.0.0",
     "btch-downloader": "^2.2.9",
     "buffer": "^6.0.3",
     "cheerio": "^1.0.0-rc.12",
