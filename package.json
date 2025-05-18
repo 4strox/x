@@ -1,6 +1,6 @@
 {
   "name": "SUBZERO-MD",
-  "version": "3.6.0",
+  "version": "***",
   "description": "THE BEST BOT IN THE UNIVERSE",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@mrnima/facebook-downloader": "1.0.0",
     "@mrnima/tiktok-downloader": "1.0.0",
+    "@shizodevs/baileys": "*",
     "@vitalets/google-translate-api": "^9.2.0",
     "acrcloud": "^1.4.0",
     "adm-zip": "^0.5.16",
@@ -35,6 +36,7 @@
     "form-data": "^4.0.0",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.1.0",
+    "gifted-baileys": "^1.5.7",
     "google-tts-api": "^2.0.2",
     "javascript-obfuscator": "^4.0.0",
     "jimp": "^0.16.1",
