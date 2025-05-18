@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "axios": "^1.2.5",
-    "@shizodevs/baileys": "*",
     "@adiwajshing/keyed-db": "latest",
     "@dark-yasiya/scrap": "1.0.1",
     "@dark-yasiya/yt-dl.js": "latest",
@@ -36,7 +35,6 @@
     "form-data": "^4.0.0",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.1.0",
-    "gifted-baileys": "^1.5.7",
     "google-tts-api": "^2.0.2",
     "javascript-obfuscator": "^4.0.0",
     "jimp": "^0.16.1",
