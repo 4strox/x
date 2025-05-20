@@ -3,7 +3,7 @@ const yts = require('yt-search');
 const axios = require('axios');
 
 cmd({
-    pattern: "song",
+    pattern: "songq",
     alias: ["play", "music"],
     react: "🎵",
     desc: "Download YouTube audio",
