@@ -3,7 +3,7 @@ const yts = require('yt-search');
 const axios = require('axios');
 
 cmd({
-    pattern: "songq",
+    pattern: "song",
     alias: ["play", "music"],
     react: "🎵",
     desc: "Download YouTube audio",
@@ -42,7 +42,7 @@ cmd({
         // Send the audio with metadata
         await conn.sendMessage(from, {
             audio: { url: data.download_url },
-            mimetype: 'audio/mpeg',
+            mimetype: 'audio/mp3',
             fileName: `${data.title}.mp3`.replace(/[^\w\s.-]/g, ''),
             contextInfo: {
                 externalAdReply: {
