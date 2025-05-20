@@ -148,6 +148,97 @@ cmd({
     }
 });
 
+
+cmd({
+    pattern: "song23",
+    alias: ["songdl", "mp3dl"],
+    react: "🎶",
+    desc: "Download high quality YouTube audio",
+    category: "download",
+    use: "<query/url>",
+    filename: __filename
+}, async (conn, m, mek, { from, q, reply }) => {
+    try {
+        if (!q) return reply("🎵 *Usage:* .song2 <song name or YouTube URL>\nExample: .song2 Alan Walker Lily\nOr: .song2 https://youtu.be/ox4tmEV6-QU");
+
+        // Send processing reaction
+        await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
+
+        let videoUrl, title, thumbnail;
+        
+        // Check if it's a URL
+        if (q.match(/(youtube\.com|youtu\.be)/)) {
+            videoUrl = q;
+            const videoInfo = await yts({ videoId: q.split(/[=/]/).pop() });
+            title = videoInfo.title;
+            thumbnail = videoInfo.thumbnail;
+        } else {
+            // Search YouTube
+            const search = await yts(q);
+            if (!search.videos.length) return reply("🔍 No results found for your search!");
+            videoUrl = search.videos[0].url;
+            title = search.videos[0].title;
+            thumbnail = search.videos[0].thumbnail;
+        }
+
+        await reply("🔧 Processing audio download...");
+
+        // Use Kaiz API to get high quality audio
+        const apiUrl = `https://kaiz-apis.gleeze.com/api/ytdown-mp3?url=${encodeURIComponent(videoUrl)}&apikey=f642c433-9f7d-4534-9437-abeffb42579f`;
+        const { data } = await axios.get(apiUrl, { timeout: 30000 });
+
+        if (!data.download_url) {
+            return reply("❌ Failed to get download link. The video may be restricted.");
+        }
+
+        // Download thumbnail
+        let thumbnailBuffer;
+        try {
+            const thumbResponse = await axios.get(data.thumbnail || thumbnail, { 
+                responseType: 'arraybuffer',
+                timeout: 10000
+            });
+            thumbnailBuffer = thumbResponse.data;
+        } catch (e) {
+            thumbnailBuffer = null;
+        }
+
+        // Send the audio file with rich metadata
+        await conn.sendMessage(from, {
+            audio: { url: data.download_url },
+            mimetype: 'audio/mpeg',
+            fileName: `${data.title.replace(/[^\w\s.-]/gi, '')}.mp3`,
+            contextInfo: {
+                externalAdReply: {
+                    title: data.title.split('-')[0].trim(),
+                    body: `🎤 ${data.author || 'Unknown Artist'}`,
+                    thumbnail: thumbnailBuffer,
+                    mediaType: 2,
+                    mediaUrl: videoUrl,
+                    sourceUrl: videoUrl
+                }
+            }
+        }, { quoted: mek });
+
+        // Send success reaction
+        await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+
+    } catch (error) {
+        console.error("Song2 download error:", error);
+        await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+        
+        let errorMsg = "🎵 Download failed: ";
+        if (error.code === 'ECONNABORTED') {
+            errorMsg += "Request timed out. Try a shorter song.";
+        } else if (error.response?.status === 429) {
+            errorMsg += "API limit reached. Try again later.";
+        } else {
+            errorMsg += error.message.includes('404') ? "Video not found." : "Please try again.";
+        }
+        
+        reply(errorMsg);
+    }
+});
 /*
 
 cmd({
