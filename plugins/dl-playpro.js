@@ -42,7 +42,7 @@ cmd({
         // Send the audio with metadata
         await conn.sendMessage(from, {
             audio: { url: data.download_url },
-            mimetype: 'audio/mp3',
+            mimetype: 'audio/mpeg',
             fileName: `${data.title}.mp3`.replace(/[^\w\s.-]/g, ''),
             contextInfo: {
                 externalAdReply: {
