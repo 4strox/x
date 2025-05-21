@@ -63,7 +63,118 @@ cmd({
     }
 });
 
+cmd({
+    pattern: "video",
+    alias: ["vid", "ytvideo"],
+    react: "🎬",
+    desc: "Download YouTube video with quality options",
+    category: "download",
+    use: "<query/url> [quality]",
+    filename: __filename
+}, async (conn, mek, m, { from, q, reply }) => {
+    try {
+        if (!q) return reply("❌ Please provide a video name or YouTube URL!\nExample: .video https://youtu.be/ox4tmEV6-QU 720\nOr: .video Alan Walker Lily 360");
 
+        // Extract quality (default to 360p if not specified)
+        const parts = q.split(/\s+/);
+        let videoQuery, quality = "360";
+        
+        // Check if last part is a quality specification
+        if (["360", "480", "720", "1080"].includes(parts[parts.length - 1])) {
+            quality = parts.pop();
+            videoQuery = parts.join(" ");
+        } else {
+            videoQuery = q;
+        }
+
+        let videoUrl, title, thumbnail;
+        
+        // Check if it's a URL
+        if (videoQuery.match(/(youtube\.com|youtu\.be)/)) {
+            videoUrl = videoQuery;
+            const videoInfo = await yts({ videoId: videoQuery.split(/[=/]/).pop() });
+            title = videoInfo.title;
+            thumbnail = videoInfo.thumbnail;
+        } else {
+            // Search YouTube
+            const search = await yts(videoQuery);
+            if (!search.videos.length) return reply("❌ No results found!");
+            videoUrl = search.videos[0].url;
+            title = search.videos[0].title;
+            thumbnail = search.videos[0].thumbnail;
+        }
+
+        await reply(`⏳ Processing ${quality}p video...`);
+
+        // Use Kaiz API to get video
+        const apiUrl = `https://kaiz-apis.gleeze.com/api/yt-down?url=${encodeURIComponent(videoUrl)}&apikey=f642c433-9f7d-4534-9437-abeffb42579f`;
+        const { data } = await axios.get(apiUrl, { timeout: 30000 });
+
+        if (!data?.response || !data.response[`${quality}p`]) {
+            const availableQualities = Object.keys(data?.response || {}).join(", ");
+            return reply(`❌ ${quality}p not available!\nAvailable qualities: ${availableQualities || 'none'}`);
+        }
+
+        const videoData = data.response[`${quality}p`];
+
+        // Download thumbnail
+        let thumbnailBuffer;
+        try {
+            const thumbResponse = await axios.get(thumbnail, { 
+                responseType: 'arraybuffer',
+                timeout: 10000 
+            });
+            thumbnailBuffer = thumbResponse.data;
+        } catch (e) {
+            thumbnailBuffer = null;
+        }
+
+        // Get sender name safely
+        let senderName = "User";
+        try {
+            senderName = await conn.getName(from.split('@')[0]) || "User";
+        } catch (e) {
+            console.error("Error getting sender name:", e);
+        }
+
+        // Send the video with metadata
+        await conn.sendMessage(from, {
+            video: { url: videoData.download_url },
+            mimetype: 'video/mp4',
+            fileName: videoData.title.replace(/[^\w\s.-]/gi, ''),
+            caption: `*${data.author || 'YouTube Video'}*\n` +
+                     `📌 Title: ${videoData.title.split('(')[0].trim()}\n` +
+                     `🖥️ Quality: ${quality}p\n` +
+                     `⬇️ Downloaded by ${senderName}`,
+            thumbnail: thumbnailBuffer
+        }, { quoted: mek });
+
+        await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+
+    } catch (error) {
+        console.error("Video download error:", error);
+        try {
+            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+        } catch (e) {
+            console.error("Failed to send error reaction:", e);
+        }
+        
+        let errorMsg = "❌ Error: ";
+        if (error.code === 'ECONNABORTED') {
+            errorMsg += "Request timed out. Try again.";
+        } else if (error.response?.status === 429) {
+            errorMsg += "API limit reached. Try again later.";
+        } else if (error.message.includes('store')) {
+            errorMsg += "Configuration error. Please contact bot admin.";
+        } else {
+            errorMsg += "Failed to download video. Try different quality.";
+        }
+        
+        reply(errorMsg);
+    }
+});
+
+/*
 cmd({
     pattern: "video",
     alias: ["vid", "ytvideo"],
@@ -147,11 +258,11 @@ cmd({
         reply(`❌ Error: ${error.message}\nTry a different quality or video.`);
     }
 });
-
+*/
 
 cmd({
-    pattern: "song23",
-    alias: ["songdl", "mp3dl"],
+    pattern: "song4",
+    alias: ["play4", "mp3dl"],
     react: "🎶",
     desc: "Download high quality YouTube audio",
     category: "download",
@@ -181,7 +292,7 @@ cmd({
             thumbnail = search.videos[0].thumbnail;
         }
 
-        await reply("🔧 Processing audio download...");
+        await reply("🚀 Processing audio download...");
 
         // Use Kaiz API to get high quality audio
         const apiUrl = `https://kaiz-apis.gleeze.com/api/ytdown-mp3?url=${encodeURIComponent(videoUrl)}&apikey=f642c433-9f7d-4534-9437-abeffb42579f`;
@@ -211,7 +322,7 @@ cmd({
             contextInfo: {
                 externalAdReply: {
                     title: data.title.split('-')[0].trim(),
-                    body: `🎤 ${data.author || 'Unknown Artist'}`,
+                    body: `🎤 ${data.authorr || '🏷️ Mr Frank OFC'}`,
                     thumbnail: thumbnailBuffer,
                     mediaType: 2,
                     mediaUrl: videoUrl,
