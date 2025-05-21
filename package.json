@@ -1,6 +1,6 @@
 {
   "name": "SUBZERO-MD",
-  "version": "3.6.0",
+  "version": "*",
   "description": "THE BEST BOT IN THE UNIVERSE",
   "main": "index.js",
   "engines": {
@@ -26,6 +26,7 @@
     "adm-zip": "^0.5.16",
     "api-dylux": "1.8.5",
     "btch-downloader": "^2.2.9",
+    "better-sqlite3": "^9.0.0",
     "buffer": "^6.0.3",
     "cheerio": "^1.0.0-rc.12",
     "crypto-digest-sync": "^1.0.0",
