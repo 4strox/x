@@ -16,10 +16,10 @@ const os = require('os');
 const { exec } = require('child_process');
 const axios = require('axios');
 const FormData = require('form-data');
-// const { setConfig, getConfig } = require("../lib/configdb");
+const { setConfig, getConfig } = require("../lib/configdb");
 
 
-/*
+
 // SET BOT IMAGE
 cmd({
   pattern: "setbotimage",
@@ -93,9 +93,9 @@ cmd({
   await reply(`✅ Prefix updated to: *${newPrefix}*\n\n♻️ Restarting...`);
   setTimeout(() => exec("pm2 restart all"), 2000);
 });
-*/
 
-/*
+
+
 // SET BOT NAME
 cmd({
   pattern: "setbotname",
@@ -132,7 +132,8 @@ cmd({
   setTimeout(() => exec("pm2 restart all"), 2000);
 });
 
-*/
+// OLD SETTINGS
+
 /*const { setConfig, getConfig } = require("../lib/configdb");
 const { exec } = require("child_process");
 const FormData = require('form-data');
@@ -250,9 +251,9 @@ cmd({
     await reply(`✅ Owner name updated to: *${name}*\n\n♻️ Restarting...`);
     setTimeout(() => exec("pm2 restart all"), 2000);
 });
-
-
 */
+
+
 
 //SETTINGS MENU
 
@@ -387,7 +388,7 @@ async (conn, mek, m, { from, args, isCreator, reply }) => {
 
 
 // ===========
-
+/*
 cmd({
     pattern: "mode",
     alias: ["setmode"],
@@ -415,9 +416,9 @@ cmd({
         return reply("❌ Invalid mode. Please use `.mode private` or `.mode public`.");
     }
 });
+*/
 
 
-/*
 cmd({
     pattern: "mode",
     alias: ["setmode"],
@@ -452,7 +453,7 @@ cmd({
     }
 });
 
-*/
+
 cmd({
     pattern: "autotyping",
     alias: ["setautotyping"],
