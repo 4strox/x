@@ -15,7 +15,7 @@ cmd({
         if (!q) return reply("❌ Please provide a song name or YouTube URL!");
 
         let videoUrl, title, thumbnail;
-        
+
         // Check if it's a URL
         if (q.match(/(youtube\.com|youtu\.be)/)) {
             videoUrl = q;
@@ -33,22 +33,42 @@ cmd({
 
         await reply("⏳ Processing your request...");
 
-        // Use Kaiz API to get audio
-        const apiUrl = `https://kaiz-apis.gleeze.com/api/ytmp3?url=${encodeURIComponent(videoUrl)}&apikey=f642c433-9f7d-4534-9437-abeffb42579f`;
-        const { data } = await axios.get(apiUrl);
+        const apiKeys = [
+            "f642c433-9f7d-4534-9437-abeffb42579f",
+            "70274fdf-52c5-4eaf-a95b-14da69559e96",
+            "e74518f3-a81f-4b55-be54-4a52f736fa23",
+            "16ac0f6e-8b00-4195-ac10-ea742f262ec2",
+            "a6b16fea-f3ba-41ab-98f2-e3660552537f",
+            "adb523bb-74e0-4aa0-a0f2-31a41ab56cf1"
+        ];
 
-        if (!data.download_url) return reply("❌ Failed to get download link!");
+        let audioData = null;
 
-        // Send the audio with metadata
+        for (const key of apiKeys) {
+            try {
+                const url = `https://kaiz-apis.gleeze.com/api/ytmp3?url=${encodeURIComponent(videoUrl)}&apikey=${key}`;
+                const { data } = await axios.get(url);
+                if (data.download_url) {
+                    audioData = data;
+                    break;
+                }
+            } catch (err) {
+                // Try next key
+                continue;
+            }
+        }
+
+        if (!audioData) return reply("❌ All API keys failed or limit exceeded!");
+
         await conn.sendMessage(from, {
-            audio: { url: data.download_url },
+            audio: { url: audioData.download_url },
             mimetype: 'audio/mpeg',
-            fileName: `${data.title}.mp3`.replace(/[^\w\s.-]/g, ''),
+            fileName: `${audioData.title}.mp3`.replace(/[^\w\s.-]/g, ''),
             contextInfo: {
                 externalAdReply: {
-                    title: data.title,
-                    body: `Downloaded By Subzero`,
-                    thumbnail: await axios.get(data.thumbnail || thumbnail, { responseType: 'arraybuffer' })
+                    title: audioData.title,
+                    body: `🏮 Downloaded By Subzero 🏮`,
+                    thumbnail: await axios.get(audioData.thumbnail || thumbnail, { responseType: 'arraybuffer' })
                         .then(res => res.data)
                         .catch(() => null),
                     mediaType: 2,
