@@ -1,4 +1,4 @@
-const { cmd } = require('../command');
+/*const { cmd } = require('../command');
 const yts = require('yt-search');
 const axios = require('axios');
 
@@ -82,9 +82,9 @@ cmd({
         reply(`❌ Error: ${error.message}`);
     }
 });
+*/
 
-
-/*const { cmd } = require('../command');
+const { cmd } = require('../command');
 const yts = require('yt-search');
 const axios = require('axios');
 
@@ -168,7 +168,6 @@ cmd({
         reply(`❌ Error: ${error.message}`);
     }
 });
-*/
 cmd({
     pattern: "video",
     alias: ["vid", "ytvideo"],
