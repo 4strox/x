@@ -3,6 +3,118 @@ const yts = require('yt-search');
 const axios = require('axios');
 
 cmd({
+pattern: "song",
+alias: ["play", "music"],
+react: "🎵",
+desc: "Download YouTube audio",
+category: "download",
+use: "<query or url>",
+filename: __filename
+}, async (conn, m, mek, { from, q, reply }) => {
+try {
+if (!q) return reply("❌ Please provide a song name or YouTube URL!");
+
+let videoUrl, title, thumbnail;  
+      
+    // Check if it's a URL  
+    if (q.match(/(youtube\.com|youtu\.be)/)) {  
+        videoUrl = q;  
+        const videoInfo = await yts({ videoId: q.split(/[=/]/).pop() });  
+        title = videoInfo.title;  
+        thumbnail = videoInfo.thumbnail;  
+    } else {  
+        // Search YouTube  
+        const search = await yts(q);  
+        if (!search.videos.length) return reply("❌ No results found!");  
+        videoUrl = search.videos[0].url;  
+        title = search.videos[0].title;  
+        thumbnail = search.videos[0].thumbnail;  
+    }  
+
+    await reply("⏳ Processing your request...");  
+
+    // List of APIs to try (including the original as first option)
+    const apis = [
+        {
+            url: 'https://kaiz-apis.gleeze.com/api/ytmp3',
+            key: 'f642c433-9f7d-4534-9437-abeffb42579f'
+        },
+        {
+            url: 'https://kaiz-apis.gleeze.com/api/ytmp3',
+            key: '70274fdf-52c5-4eaf-a95b-14da69559e96'
+        },
+        {
+            url: 'https://kaiz-apis.gleeze.com/api/ytmp3',
+            key: 'e74518f3-a81f-4b55-be54-4a52f736fa23'
+        },
+        {
+            url: 'https://kaiz-apis.gleeze.com/api/ytmp3',
+            key: '16ac0f6e-8b00-4195-ac10-ea742f262ec2'
+        },
+        {
+            url: 'https://kaiz-apis.gleeze.com/api/ytmp3',
+            key: 'a6b16fea-f3ba-41ab-98f2-e3660552537f'
+        },
+        {
+            url: 'https://kaiz-apis.gleeze.com/api/ytmp3',
+            key: 'adb523bb-74e0-4aa0-a0f2-31a41ab56cf1'
+        }
+    ];
+
+    let data;
+    let lastError;
+    
+    // Try each API until one works
+    for (const api of apis) {
+        try {
+            const apiUrl = `${api.url}?url=${encodeURIComponent(videoUrl)}&apikey=${api.key}`;
+            const response = await axios.get(apiUrl);
+            
+            if (response.data && response.data.download_url) {
+                data = response.data;
+                break;
+            }
+        } catch (error) {
+            lastError = error;
+            continue; // Try next API
+        }
+    }
+
+    if (!data || !data.download_url) {
+        console.error("All APIs failed:", lastError);
+        return reply("❌ All download services failed. Please try again later.");
+    }
+
+    // Send the audio with metadata  
+    await conn.sendMessage(from, {  
+        audio: { url: data.download_url },  
+        mimetype: 'audio/mpeg',  
+        fileName: `${data.title}.mp3`.replace(/[^\w\s.-]/g, ''),  
+        contextInfo: {  
+            externalAdReply: {  
+                title: data.title,  
+                body: `Downloaded By Subzero`,  
+                thumbnail: await axios.get(data.thumbnail || thumbnail, { responseType: 'arraybuffer' })  
+                    .then(res => res.data)  
+                    .catch(() => null),  
+                mediaType: 2,  
+                mediaUrl: videoUrl  
+            }  
+        }  
+    }, { quoted: mek });  
+
+} catch (error) {  
+    console.error("Song download error:", error);  
+    reply(`❌ Error: ${error.message}`);  
+}
+});
+
+
+/*const { cmd } = require('../command');
+const yts = require('yt-search');
+const axios = require('axios');
+
+cmd({
     pattern: "song",
     alias: ["play", "music"],
     react: "🎵",
@@ -82,7 +194,7 @@ cmd({
         reply(`❌ Error: ${error.message}`);
     }
 });
-
+*/
 cmd({
     pattern: "video",
     alias: ["vid", "ytvideo"],
