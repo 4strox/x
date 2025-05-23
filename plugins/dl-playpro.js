@@ -31,7 +31,7 @@ cmd({
             thumbnail = search.videos[0].thumbnail;
         }
 
-        await reply("⏳ Processing your request...");
+        await reply("> ⏳ Processing your request...");
 
         const apiKeys = [
             "f642c433-9f7d-4534-9437-abeffb42579f",
@@ -67,7 +67,7 @@ cmd({
             contextInfo: {
                 externalAdReply: {
                     title: audioData.title,
-                    body: `Downloaded By Subzero`,
+                    body: `🏮 Downloaded By Subzero 🏮`,
                     thumbnail: await axios.get(audioData.thumbnail || thumbnail, { responseType: 'arraybuffer' })
                         .then(res => res.data)
                         .catch(() => null),
